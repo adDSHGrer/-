@@ -8,7 +8,7 @@
 # warnings.filterwarnings('ignore')
 #
 # # 加载训练好的模型（根据您的模型保存路径进行调整）
-# model = YOLO('runs/train/exp18/weights/best.pt')  # 根据模型保存位置进行调整
+# model = YOLO('D:/python123/ultralytics/best.pt')  # 根据模型保存位置进行调整
 #
 # # 定义包含图像的文件夹
 # input_folder = r'H:\broken'
@@ -77,35 +77,70 @@
 #     print(f"拼接并保存: {combined_output_path}")
 #
 # print("所有图像已处理并保存。")
+# import os
+#
+# # 指定包含 TXT 文件的文件夹路径
+# folder_path = r'H:\out_broken'
+#
+# # 遍历文件夹中的所有文件
+# for filename in os.listdir(folder_path):
+#     if filename.endswith('.txt'):
+#         txt_file_path = os.path.join(folder_path, filename)
+#
+#         # 读取当前 TXT 文件
+#         with open(txt_file_path, 'r') as file:
+#             lines = file.readlines()
+#
+#         # 处理每一行
+#         modified_lines = []
+#         for line in lines:
+#             parts = line.split()  # 按空格分割
+#             if parts:  # 确保行不为空
+#                 # 将第一个数字减少 15
+#                 if int(parts[0])>14:
+#                     class_id = str(int(parts[0])-15)
+#                 else:
+#                     class_id = parts[0]
+#                 # 生成新的行
+#                 new_line = f"{class_id} " + " ".join(parts[1:]) + "\n"
+#                 modified_lines.append(new_line)
+#
+#         # 将修改后的内容写回原文件
+#         with open(txt_file_path, 'w') as file:
+#             file.writelines(modified_lines)
+#
+#         print(f"已处理文件: {filename}")
+#
+# print("所有文件已处理完毕。")
 import os
 
-# 指定包含 TXT 文件的文件夹路径
-folder_path = r'D:\python123\ultralytics\datas\labels\train'
 
-# 遍历文件夹中的所有文件
-for filename in os.listdir(folder_path):
-    if filename.endswith('.txt'):
-        txt_file_path = os.path.join(folder_path, filename)
+def process_label_files(directory):
+    # 遍历目标目录中的所有文件
+    for filename in os.listdir(directory):
+        if filename.endswith('.txt'):
+            file_path = os.path.join(directory, filename)
 
-        # 读取当前 TXT 文件
-        with open(txt_file_path, 'r') as file:
-            lines = file.readlines()
+            # 读取文件内容并处理
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
 
-        # 处理每一行
-        modified_lines = []
-        for line in lines:
-            parts = line.split()  # 按空格分割
-            if parts:  # 确保行不为空
-                # 将第一个数字减少 15
-                class_id = int(parts[0]) - 15
-                # 生成新的行
-                new_line = f"{class_id} " + " ".join(parts[1:]) + "\n"
-                modified_lines.append(new_line)
+            # 处理每一行
+            processed_lines = []
+            for line in lines:
+                # 按空格分割行中的每个元素
+                parts = line.split()
+                if parts:
+                    # 去掉小数点并转换为整数
+                    label = parts[0].split('.')[0]  # 去掉数字的后面的部分
+                    processed_line = f"{label} " + " ".join(parts[1:])  # 保留其他内容与空格
+                    processed_lines.append(processed_line)
 
-        # 将修改后的内容写回原文件
-        with open(txt_file_path, 'w') as file:
-            file.writelines(modified_lines)
+            # 写入到文件
+            with open(file_path, 'w') as file:
+                file.write("\n".join(processed_lines))
 
-        print(f"已处理文件: {filename}")
 
-print("所有文件已处理完毕。")
+# 指定要处理的目录
+directory_path = 'D:\python123/ultralytics\datas\label/train'  # 替换为您的目录路径
+process_label_files(directory_path)
